@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, current_app, request, jsonify, redirect, url_for, make_response
+
+from app import cache
 from app.CRUD.store.forms import StoreForm
 from app.CRUD.address.models import AddressModel
 from app.CRUD.store.models import StoreModel
@@ -13,17 +15,23 @@ def list_store_api():
     address = AddressModel()
     page = request.args.get('page', 1, type=int)
     stores, total_pages = store.query_paginate(page)
+    print(total_pages)
+    data = []
+    for store in stores:
+        result, error = address.get_name_by_id(store.address_id)
+        if error:
+            return make_response(jsonify(error=error), 404)
+        data.append({"id": str(store.id), 'address_name': result, "name": store.store_name})
     res = {
         "total_pages": total_pages,
-        "data": [
-            {"id": str(store.id), 'address_name': address.get_name_by_id(store.address_id), "name": store.store_name}
-            for
-            store in stores],
+        "data": data
     }
+
     return make_response(jsonify(res), 200)
 
 
 @store_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def list_store(error=None, form=None):
     address = AddressModel()
     if form is None:

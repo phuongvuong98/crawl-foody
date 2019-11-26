@@ -1,7 +1,11 @@
 import mongoengine
 
+from app.CRUD.search.models import SearchableMixin
 
-class City(mongoengine.Document):
+
+class City(mongoengine.Document, SearchableMixin):
+    __tablename__ = 'city_mongo'
+    __searchable__ = ['name']
     name = mongoengine.StringField(max_length=60, required=True, unique=True)
     meta = {'allow_inheritance': True}
 

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 
+from app import cache
 from app.CRUD.address.forms import AddressForm
 from app.CRUD.city.models import CityModel
 from app.CRUD.address.models import AddressModel
@@ -26,6 +27,7 @@ def create_address():
 
 
 @address_blueprint.route('/district', methods=['GET'])
+@cache.cached(timeout=500)
 def get_district_by_city():
     city_id = request.args.get('city_id')
     district = DistrictModel()

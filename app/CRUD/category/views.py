@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, current_app, request, jsonify, redirect, url_for, make_response
+
+from app import cache
 from app.CRUD.category.forms import CategoryForm
 from app.CRUD.brand.models import BrandModel
 from app.CRUD.category.models import CategoryModel
@@ -22,6 +24,7 @@ def list_category_api():
 
 
 @category_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def list_category(error=None, form=None):
     brand = BrandModel()
     if form is None:

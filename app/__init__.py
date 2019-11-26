@@ -1,16 +1,23 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
-from flask_sqlalchemy import SQLAlchemy
-from config import config
-from flask_mongoengine import MongoEngine
-# db = SQLAlchemy()
+from elasticsearch import Elasticsearch
+import time
+from app.cache import cache
+
 db = MongoEngine()
 
 
 def create_app(config_name):
     app = Flask(__name__)
     CORS(app)
+    app.config['CACHE_TYPE'] = 'redis'
+    app.config['CACHE_KEY_PREFIX'] = 'fcache'
+    app.config['CACHE_REDIS_HOST'] = 'localhost'
+    app.config['CACHE_REDIS_PORT'] = '6379'
+    app.config['CACHE_REDIS_URL'] = 'redis://localhost:6379'
+    cache.init_app(app)
+
     # app.config.from_object(config[config_name])
     # config[config_name].init_app(app)
     # app.config['MONGODB_DB'] = 'crud'
@@ -36,6 +43,9 @@ def create_app(config_name):
 
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     db.init_app(app)
+    app.config['ELASTICSEARCH_URL'] = 'http://localhost:9200'
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+        if app.config['ELASTICSEARCH_URL'] else None
 
     from app.CRUD.city.views import city_blueprint
     from app.CRUD.district.views import district_blueprint
@@ -46,6 +56,7 @@ def create_app(config_name):
     from app.CRUD.product.views import product_blueprint
     from app.CRUD.brand.views import brand_blueprint
     from app.CRUD.product_variant.views import variant_blueprint
+    from app.CRUD.search.views import search_blueprint
 
     app.register_blueprint(city_blueprint, url_prefix='/city')
     app.register_blueprint(district_blueprint, url_prefix='/district')
@@ -56,8 +67,10 @@ def create_app(config_name):
     app.register_blueprint(product_blueprint, url_prefix='/product')
     app.register_blueprint(brand_blueprint, url_prefix='/brand')
     app.register_blueprint(variant_blueprint, url_prefix='/variants')
+    app.register_blueprint(search_blueprint, url_prefix='/')
 
-    # with app.app_context():
-    #     db.create_all()
+    @app.route('/redis')
+    def index():
+        return query_db()
 
     return app

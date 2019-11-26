@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 
+from app import cache
 from app.CRUD.product.forms import ProductForm
 from app.CRUD.brand.models import BrandModel
 from app.CRUD.product.models import ProductModel
@@ -38,6 +39,7 @@ def get_category_by_brand():
 
 
 @product_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def list_products(error=None, form=None):
     if form is None:
         form = ProductForm()

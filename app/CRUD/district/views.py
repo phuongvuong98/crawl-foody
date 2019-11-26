@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, current_app, request, jsonify, redirect, url_for, make_response
+
+from app import cache
 from app.CRUD.district.forms import DistrictForm
 from app.CRUD.city.models import CityModel
 from app.CRUD.district.models import DistrictModel
@@ -22,6 +24,7 @@ def list_district_api():
 
 
 @district_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def list_district(error=None, form=None):
     city = CityModel()
     if form is None:

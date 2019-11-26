@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, current_app, request, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 
+from app import cache
 from app.CRUD.address.models import AddressModel
 from app.CRUD.product_variant.models import ProductVariantModel
 from app.CRUD.store.models import StoreModel
@@ -11,6 +12,7 @@ variant_blueprint = Blueprint(
 
 
 @variant_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def index():
     page = request.args.get("page", 1, type=int)
     product_variant = ProductVariantModel()
@@ -20,14 +22,14 @@ def index():
     stores = store.query_all()
     products = product.query_all()
     colors = color.query_all()
-    product_variants, total_pages, a = product_variant.query_paginate(page)
+    product_variants, total_pages, cur_page = product_variant.query_paginate(page)
     return render_template('CRUD/product_variant/list.html', stores=stores, products=products, colors=colors,
                            variant_active="active", variants=product_variants, pages=total_pages)
 
 
 @variant_blueprint.route('/api/create', methods=['POST'])
 def api_create():
-    price = request.values.get("product_variant_price", 0, type=int)
+    price = request.values.get("product_variant_price")
     product_id = request.values.get("product_id", None)
     store_id = request.values.get("store_id", None)
     color_id = request.values.get("color_id", None)

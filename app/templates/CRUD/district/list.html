@@ -112,7 +112,7 @@
     <script type="text/javascript">
         $('#pagination').twbsPagination({
             totalPages: parseInt($("#totalPages").attr('value')),
-            visiblePages: 2,
+            visiblePages: 5,
             onPageClick: function (event, page) {
                 $('#page-content').text('Page ' + page);
                 $.ajax('/district/api/list?page=' + page,

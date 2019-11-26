@@ -1,7 +1,7 @@
 import enum
 
 class Pages(enum.IntEnum):
-   NUMBER_PER_PAGE = 3
+   NUMBER_PER_PAGE = 10
 
 class Errors(enum.Flag):
    ERROR_NONE = "Error: all fields is not completed"

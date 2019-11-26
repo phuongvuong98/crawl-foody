@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, make_response, jsonify, redirect
+
+from app import cache
 from app.CRUD.color.forms import ColorForm
 from app.CRUD.color.models import ColorModel
 
@@ -18,6 +20,7 @@ def list_color_api():
 
 
 @color_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def list_color(error=None, form=None):
     if form is None:
         form = ColorForm()

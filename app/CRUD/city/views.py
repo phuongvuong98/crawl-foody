@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, make_response, jsonify, redirect
 from app.CRUD.city.forms import CityForm
 from app.CRUD.city.models import CityModel
+from app.cache import cache
 
 city_blueprint = Blueprint('city', __name__, template_folder='templates')
 
@@ -18,6 +19,7 @@ def list_city_api():
 
 
 @city_blueprint.route('/', methods=['GET'])
+@cache.cached(timeout=500)
 def list_city(error=None, form=None):
     if form is None:
         form = CityForm()
