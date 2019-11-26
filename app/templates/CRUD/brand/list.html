@@ -103,7 +103,7 @@
     <script type="text/javascript">
         $('#pagination').twbsPagination({
             totalPages: parseInt($("#totalPages").attr('value')),
-            visiblePages: 5,
+            visiblePages: {{ visible_page }},
             onPageClick: function (event, page) {
                 $('#page-content').text('Page ' + page);
                 $.ajax('/brand/api/list?page=' + page,

@@ -4,6 +4,7 @@ from app import cache
 from app.CRUD.district.forms import DistrictForm
 from app.CRUD.city.models import CityModel
 from app.CRUD.district.models import DistrictModel
+from constants import Pages
 
 district_blueprint = Blueprint(
     'district', __name__, template_folder='templates')
@@ -24,7 +25,7 @@ def list_district_api():
 
 
 @district_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def list_district(error=None, form=None):
     city = CityModel()
     if form is None:
@@ -34,7 +35,7 @@ def list_district(error=None, form=None):
     districts, total_pages = district.query_paginate(page)
     cities = city.query_all()
     return render_template('CRUD/district/list.html', total_pages=total_pages, cities=cities, district_active="active",
-                           form=form)
+                           form=form, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @district_blueprint.route('/create', methods=['GET', 'POST'])

@@ -5,6 +5,7 @@ from app.CRUD.product.forms import ProductForm
 from app.CRUD.brand.models import BrandModel
 from app.CRUD.product.models import ProductModel
 from app.CRUD.category.models import CategoryModel
+from constants import Pages
 
 product_blueprint = Blueprint('product', __name__, template_folder='templates')
 
@@ -39,7 +40,7 @@ def get_category_by_brand():
 
 
 @product_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def list_products(error=None, form=None):
     if form is None:
         form = ProductForm()
@@ -60,7 +61,7 @@ def list_products(error=None, form=None):
     list_brand = brand_all.query_all()
     return render_template('CRUD/product/list.html', products=products, total_page=total_page,
                            current_page=current_page, list_brand=list_brand, product_active="active", form=form,
-                           error=error)
+                           error=error, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @product_blueprint.route('/', methods=['POST'])

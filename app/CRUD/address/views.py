@@ -6,6 +6,8 @@ from app.CRUD.city.models import CityModel
 from app.CRUD.address.models import AddressModel
 from app.CRUD.district.models import DistrictModel
 
+from constants import Pages
+
 address_blueprint = Blueprint('address', __name__, template_folder='templates')
 
 
@@ -27,7 +29,7 @@ def create_address():
 
 
 @address_blueprint.route('/district', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def get_district_by_city():
     city_id = request.args.get('city_id')
     district = DistrictModel()
@@ -60,7 +62,7 @@ def list_addresses(error=None, form=None):
     list_city = city_all.query_all()
     return render_template('CRUD/address/list.html', addresses=addresses, total_page=total_page,
                            current_page=current_page, list_city=list_city, address_active="active", form=form,
-                           error=error)
+                           error=error, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @address_blueprint.route('/', methods=['POST'])

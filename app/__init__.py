@@ -2,7 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from elasticsearch import Elasticsearch
-import time
+from config import config
+
 from app.cache import cache
 
 db = MongoEngine()
@@ -11,39 +12,11 @@ db = MongoEngine()
 def create_app(config_name):
     app = Flask(__name__)
     CORS(app)
-    app.config['CACHE_TYPE'] = 'redis'
-    app.config['CACHE_KEY_PREFIX'] = 'fcache'
-    app.config['CACHE_REDIS_HOST'] = 'localhost'
-    app.config['CACHE_REDIS_PORT'] = '6379'
-    app.config['CACHE_REDIS_URL'] = 'redis://localhost:6379'
+
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
     cache.init_app(app)
-
-    # app.config.from_object(config[config_name])
-    # config[config_name].init_app(app)
-    # app.config['MONGODB_DB'] = 'crud'
-    # app.config['MONGODB_HOST'] = 'mongodb+srv://cluster0-aecmg.mongodb.net/crud?ssl=true&ssl_cert_reqs=CERT_NONE'
-    # app.config['MONGODB_USERNAME'] = 'nodejs'
-    # app.config['MONGODB_PASSWORD'] = 'Vuong0935986100'
-
-    app.config['MONGODB_DB'] = 'crud'
-    app.config['MONGODB_HOST'] = 'mongodb://localhost:27017/crud_1'
-
-    app.config['TESTING'] = True
-    app.config['SECRET_KEY'] = 'flask+mongoengine=<3'
-    app.debug = True
-    app.config['DEBUG_TB_PANELS'] = (
-        'flask_debugtoolbar.panels.versions.VersionDebugPanel',
-        'flask_debugtoolbar.panels.timer.TimerDebugPanel',
-        'flask_debugtoolbar.panels.headers.HeaderDebugPanel',
-        'flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel',
-        'flask_debugtoolbar.panels.template.TemplateDebugPanel',
-        'flask_debugtoolbar.panels.logger.LoggingPanel',
-        'flask_mongoengine.panels.MongoDebugPanel'
-    )
-
-    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     db.init_app(app)
-    app.config['ELASTICSEARCH_URL'] = 'http://localhost:9200'
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if app.config['ELASTICSEARCH_URL'] else None
 
@@ -68,9 +41,5 @@ def create_app(config_name):
     app.register_blueprint(brand_blueprint, url_prefix='/brand')
     app.register_blueprint(variant_blueprint, url_prefix='/variants')
     app.register_blueprint(search_blueprint, url_prefix='/')
-
-    @app.route('/redis')
-    def index():
-        return query_db()
 
     return app

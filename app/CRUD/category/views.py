@@ -4,6 +4,7 @@ from app import cache
 from app.CRUD.category.forms import CategoryForm
 from app.CRUD.brand.models import BrandModel
 from app.CRUD.category.models import CategoryModel
+from constants import Pages
 
 category_blueprint = Blueprint(
     'category', __name__, template_folder='templates')
@@ -24,7 +25,7 @@ def list_category_api():
 
 
 @category_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def list_category(error=None, form=None):
     brand = BrandModel()
     if form is None:
@@ -34,7 +35,7 @@ def list_category(error=None, form=None):
     categorys, total_pages = category.query_paginate(page)
     brands = brand.query_all()
     return render_template('CRUD/category/list.html', total_pages=total_pages, brands=brands, category_active="active",
-                           form=form)
+                           form=form, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @category_blueprint.route('/create', methods=['GET', 'POST'])

@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, make_response, jsonify, r
 from app import cache
 from app.CRUD.color.forms import ColorForm
 from app.CRUD.color.models import ColorModel
+from constants import Pages
 
 color_blueprint = Blueprint('color', __name__, template_folder='templates')
 
@@ -20,14 +21,14 @@ def list_color_api():
 
 
 @color_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def list_color(error=None, form=None):
     if form is None:
         form = ColorForm()
     page = request.args.get('page', 1, type=int)
     color = ColorModel()
     colors, total_pages = color.query_paginate(page)
-    return render_template('CRUD/color/list.html', total_pages=total_pages, color_active="active", form=form, error=error)
+    return render_template('CRUD/color/list.html', total_pages=total_pages, color_active="active", form=form, error=error, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @color_blueprint.route('/create', methods=['GET', 'POST'])

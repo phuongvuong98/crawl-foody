@@ -5,10 +5,23 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
-    SQLALCHEMY_TRACK_MODIFICATIONS = "False"
+    CACHE_TYPE = 'redis'
+    CACHE_KEY_PREFIX = 'fcache'
+    CACHE_REDIS_HOST = 'localhost'
+    CACHE_REDIS_PORT = '6379'
+    CACHE_REDIS_URL = 'redis://localhost:6379'
+    DEBUG_TB_PANELS = (
+        'flask_debugtoolbar.panels.versions.VersionDebugPanel',
+        'flask_debugtoolbar.panels.timer.TimerDebugPanel',
+        'flask_debugtoolbar.panels.headers.HeaderDebugPanel',
+        'flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel',
+        'flask_debugtoolbar.panels.template.TemplateDebugPanel',
+        'flask_debugtoolbar.panels.logger.LoggingPanel',
+        'flask_mongoengine.panels.MongoDebugPanel'
+    )
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
     ELASTICSEARCH_URL = 'http://localhost:9200'
 
-    # ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
     @staticmethod
     def init_app(app):
@@ -17,7 +30,8 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://root:@localhost:3306/test?charset=utf8mb4"
+    MONGODB_DB = 'crud'
+    MONGODB_HOST = 'mongodb://localhost:27017/crud_1'
 
     @classmethod
     def init_app(cls, app):
@@ -26,7 +40,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://root:@localhost:3306/test?charset=utf8mb4"
+    MONGODB_DB = 'crud'
+    MONGODB_HOST = 'mongodb://localhost:27017/crud_1'
 
     @classmethod
     def init_app(cls, app):

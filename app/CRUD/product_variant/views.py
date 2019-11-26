@@ -6,13 +6,14 @@ from app.CRUD.product_variant.models import ProductVariantModel
 from app.CRUD.store.models import StoreModel
 from app.CRUD.product.models import ProductModel
 from app.CRUD.color.models import ColorModel
+from constants import Pages
 
 variant_blueprint = Blueprint(
     'variant', __name__, template_folder='templates')
 
 
 @variant_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def index():
     page = request.args.get("page", 1, type=int)
     product_variant = ProductVariantModel()
@@ -24,7 +25,7 @@ def index():
     colors = color.query_all()
     product_variants, total_pages, cur_page = product_variant.query_paginate(page)
     return render_template('CRUD/product_variant/list.html', stores=stores, products=products, colors=colors,
-                           variant_active="active", variants=product_variants, pages=total_pages)
+                           variant_active="active", variants=product_variants, pages=total_pages, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @variant_blueprint.route('/api/create', methods=['POST'])

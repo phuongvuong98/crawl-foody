@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, make_response, jsonify, r
 from app import cache
 from app.CRUD.brand.forms import BrandForm
 from app.CRUD.brand.models import BrandModel
+from constants import Pages
 
 brand_blueprint = Blueprint('brand', __name__, template_folder='templates')
 
@@ -27,7 +28,7 @@ def list_brand(error=None, form=None):
     page = request.args.get('page', 1, type=int)
     brand = BrandModel()
     brands, total_pages = brand.query_paginate(page)
-    return render_template('CRUD/brand/list.html', total_pages=total_pages, brand_active="active", form=form, error=error)
+    return render_template('CRUD/brand/list.html', total_pages=total_pages, brand_active="active", form=form, error=error, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @brand_blueprint.route('/create', methods=['GET', 'POST'])

@@ -4,6 +4,7 @@ from app import cache
 from app.CRUD.store.forms import StoreForm
 from app.CRUD.address.models import AddressModel
 from app.CRUD.store.models import StoreModel
+from constants import Pages
 
 store_blueprint = Blueprint(
     'store', __name__, template_folder='templates')
@@ -31,7 +32,7 @@ def list_store_api():
 
 
 @store_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def list_store(error=None, form=None):
     address = AddressModel()
     if form is None:
@@ -41,7 +42,7 @@ def list_store(error=None, form=None):
     stores, total_pages = store.query_paginate(page)
     addresses = address.query_all()
     return render_template('CRUD/store/list.html', total_pages=total_pages, addresses=addresses, store_active="active",
-                           form=form)
+                           form=form, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @store_blueprint.route('/create', methods=['GET', 'POST'])

@@ -7,10 +7,11 @@ from bson import ObjectId
 from pymongo import MongoClient
 from random import randint
 
-#Step 1: Connect to MongoDB - Note: Change connection string as needed
+# Step 1: Connect to MongoDB - Note: Change connection string as needed
 client = MongoClient(port=27017)
-db=client.crud_1
-#Step 2: Create sample data
+db = client.crud_1
+
+# Step 2: Create sample data
 # names = []
 # with open(os.path.abspath(os.path.dirname(__file__)) + '/city.csv') as csv_file:
 #     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -39,10 +40,6 @@ db=client.crud_1
 #     print('Created {0} of 1000 as {1}'.format(x,result.inserted_id))
 # #Step 5: Tell us that you are done
 # print('finished creating 1000 cities')
-
-
-
-
 
 
 # names = []
@@ -77,8 +74,6 @@ db=client.crud_1
 # print('finished creating 1000 districts')
 
 
-
-
 # names = []
 # with open(os.path.abspath(os.path.dirname(__file__)) + '/address.csv') as csv_file:
 #     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -111,8 +106,6 @@ db=client.crud_1
 # print('finished creating 1000 addresses')
 
 
-
-
 # names = []
 # with open(os.path.abspath(os.path.dirname(__file__)) + '/store.csv') as csv_file:
 #     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -143,8 +136,6 @@ db=client.crud_1
 #     print('Created {0} of 1000 as {1}'.format(x, result.inserted_id))
 # #Step 5: Tell us that you are done
 # print('finished creating 1000 stores')
-
-
 
 
 # names = []
@@ -278,7 +269,6 @@ db=client.crud_1
 # print('finished creating 1000 products')
 
 
-
 names = []
 with open(os.path.abspath(os.path.dirname(__file__)) + '/variant.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -310,5 +300,5 @@ for x in range(1, 1000):
 
     # Step 4: Print to the console the ObjectID of the new document
     print('Created {0} of 1000 as {1}'.format(x, result.inserted_id))
-#Step 5: Tell us that you are done
+# Step 5: Tell us that you are done
 print('finished creating 1000 product_variant')

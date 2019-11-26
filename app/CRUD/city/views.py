@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, make_response, jsonify, r
 from app.CRUD.city.forms import CityForm
 from app.CRUD.city.models import CityModel
 from app.cache import cache
+from constants import Pages
 
 city_blueprint = Blueprint('city', __name__, template_folder='templates')
 
@@ -19,14 +20,14 @@ def list_city_api():
 
 
 @city_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=20)
 def list_city(error=None, form=None):
     if form is None:
         form = CityForm()
     page = request.args.get('page', 1, type=int)
     city = CityModel()
     cities, total_pages = city.query_paginate(page)
-    return render_template('CRUD/city/list.html', total_pages=total_pages, city_active="active", form=form, error=error)
+    return render_template('CRUD/city/list.html', total_pages=total_pages, city_active="active", form=form, error=error, visible_page=Pages.VISIBLE_PAGE.value)
 
 
 @city_blueprint.route('/create', methods=['GET', 'POST'])
