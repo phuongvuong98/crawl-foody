@@ -1,47 +1,53 @@
-from flask import Blueprint, render_template, current_app, request, jsonify, redirect, url_for
-from app.models import Color
-from app import db
+from flask import Blueprint, render_template, request, make_response, jsonify, redirect
+from app.CRUD.color.forms import ColorForm
+from app.CRUD.color.models import ColorModel
 
-color_blueprint = Blueprint(
-    'color', __name__, template_folder='templates')
+color_blueprint = Blueprint('color', __name__, template_folder='templates')
+
+
+@color_blueprint.route('/api/list', methods=['GET'])
+def list_color_api():
+    page = request.args.get('page', 1, type=int)
+    color = ColorModel()
+    colors, total_pages = color.query_paginate(page)
+    res = {
+        "total_pages": total_pages,
+        "data": [{"id": str(color.id), "name": color.value} for color in colors],
+    }
+    return make_response(jsonify(res), 200)
 
 
 @color_blueprint.route('/', methods=['GET'])
-def color():
-    per_page = 10
-    page = request.args.get("page", 1, type=int)
-    colors = Color.query.order_by(Color.id).paginate(page, per_page, error_out=False)
-    return render_template('CRUD/color/color.html', color_active="active", colors=colors.items, pages=colors.pages)
+def list_color(error=None, form=None):
+    if form is None:
+        form = ColorForm()
+    page = request.args.get('page', 1, type=int)
+    color = ColorModel()
+    colors, total_pages = color.query_paginate(page)
+    return render_template('CRUD/color/list.html', total_pages=total_pages, color_active="active", form=form, error=error)
 
 
-@color_blueprint.route('/api/create', methods=['POST'])
-def api_create():
-    # print(request.values)
-    data = request.values
-    color_value = data.get("value", None)
-    if color_value is None:
-        return jsonify({"sucess": False, "data": None})
-    color = Color(value=color_value)
-    db.session.add(color)
-    db.session.commit()
-    data = {"id": color.id, "name": color.value}
-    return redirect(url_for("color.color"))
+@color_blueprint.route('/create', methods=['GET', 'POST'])
+def create_color(error=None):
+    form = ColorForm()
+    if form.validate_on_submit():
+        if request.method == 'POST':
+            color_value = request.form['color_name']
+            result, error = ColorModel.create(color_value)
+            if error:
+                return list_color(error)
+            return redirect('/color')
+    return render_template('CRUD/color/create.html', error=error, color_active="active", form=form)
 
 
-@color_blueprint.route('/api/edit', methods=['POST'])
-def edit_district():
-    data = request.get_json()
-    id = data.get("id", None)
-    value = data.get("value", None)
-    if value is None or id is None:
-        return jsonify({"sucess": False, "data": None})
-    color = Color.query.filter(Color.id == id).first()
-    color.value = value
-    db.session.commit()
-    data = {"id": color.id, "value": color.value}
-    return jsonify({"sucess": True, "data": data})
-
-
-@color_blueprint.route("/create")
-def create():
-    return render_template("CRUD/color/create.html", color_active="active")
+@color_blueprint.route('/edit', methods=['POST'])
+def edit_color():
+    form = ColorForm()
+    color = ColorModel()
+    if form.validate_on_submit():
+        color_id = request.form['color_id']
+        color_value = request.form['color_name']
+        result, error = color.edit(color_id, color_value)
+        if error:
+            return list_color(error)
+    return list_color(form=form)

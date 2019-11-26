@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, make_response, jsonify, redirect
 from app.CRUD.city.forms import CityForm
-from app.CRUD.city.models import City
+from app.CRUD.city.models import CityModel
 
 city_blueprint = Blueprint('city', __name__, template_folder='templates')
 
@@ -8,26 +8,22 @@ city_blueprint = Blueprint('city', __name__, template_folder='templates')
 @city_blueprint.route('/api/list', methods=['GET'])
 def list_city_api():
     page = request.args.get('page', 1, type=int)
-    cities, total_pages = City.query_all(page)
-    arr_city = []
-    for city in cities:
-        tmp_city = {
-            'id': str(city.id),
-            'name': city.name
-        }
-        arr_city.append(tmp_city)
+    city = CityModel()
+    cities, total_pages = city.query_paginate(page)
     res = {
         "total_pages": total_pages,
-        "data": arr_city,
+        "data": [{"id": str(city.id), "name": city.name} for city in cities],
     }
     return make_response(jsonify(res), 200)
 
 
 @city_blueprint.route('/', methods=['GET'])
-def list_city(error=None):
-    form = CityForm()
+def list_city(error=None, form=None):
+    if form is None:
+        form = CityForm()
     page = request.args.get('page', 1, type=int)
-    cities, total_pages = City.query_all(page)
+    city = CityModel()
+    cities, total_pages = city.query_paginate(page)
     return render_template('CRUD/city/list.html', total_pages=total_pages, city_active="active", form=form, error=error)
 
 
@@ -37,22 +33,21 @@ def create_city(error=None):
     if form.validate_on_submit():
         if request.method == 'POST':
             city_name = request.form['city_name']
-            city_exist = City.find(city_name)
-            if city_exist is None or len(city_exist) == 0:
-                return City.create(city_name) and redirect('/city')
-            else:
-                error = "Your city is error"
+            result, error = CityModel.create(city_name)
+            if error:
+                return list_city(error)
+            return redirect('/city')
     return render_template('CRUD/city/create.html', error=error, city_active="active", form=form)
 
 
-@city_blueprint.route('/edit', methods=['POST'])
+@city_blueprint.route('/', methods=['POST'])
 def edit_city():
     form = CityForm()
-    cities, total_pages = City.query_all(1)
+    city = CityModel()
     if form.validate_on_submit():
         city_id = request.form['city_id']
         city_name = request.form['city_name']
-        result, error = City.edit(city_id, city_name)
+        result, error = city.edit(city_id, city_name)
         if error:
             return list_city(error)
-    return render_template('CRUD/city/list.html', total_pages=total_pages, city_active="active", form=form)
+    return list_city(form=form)

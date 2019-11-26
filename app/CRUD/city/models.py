@@ -1,40 +1,38 @@
-import math
-
 from flask_mongoengine import Pagination
-
-from app import db
 from app.entity.mongo.city import City as CityEntity
 from constants import Pages
 
 
-class City(CityEntity):
-    __tablename__ = 'city'
+class CityModel(CityEntity):
+    objects = CityEntity.objects
 
-    def __init__(self, name):
-        self.name = name
+    def get_name_by_id(self, city_id):
+        return self.objects.get(id=city_id).name
+
+    def query_all(self):
+        return self.objects
+
+    def query_paginate(self, page):
+        cities = Pagination(self.objects, int(page), int(Pages['NUMBER_PER_PAGE']))
+        return cities.items, cities.pages
+
+    def find_by_id(self, city_id):
+        return self.objects(id__exact=city_id)
+
+    def find(self, name):
+        return self.objects(name__exact=name)
+
+    def edit(self, _id, name):
+        try:
+            self.objects(id__exact=_id).update(set__name=name)
+            return True, None
+        except Exception as e:
+            return False, e.__str__()
 
     @classmethod
     def create(cls, name):
         try:
             CityEntity(name=name).save()
-            return True
-        except:
-            return False
-
-    @classmethod
-    def edit(cls, _id, name):
-        try:
-            CityEntity.objects(id__exact=_id).update(set__name=name)
             return True, None
-        except:
-            return False, "Your city is existed"
-
-    @classmethod
-    def find(cls, name):
-        print(CityEntity.objects(name__exact=name))
-        return CityEntity.objects(name__exact=name)
-
-    @classmethod
-    def query_all(cls, page):
-        cities = Pagination(CityEntity.objects, int(page), int(Pages['NUMBER_PER_PAGE']))
-        return cities.items, cities.pages
+        except Exception as e:
+            return False, e.__str__()

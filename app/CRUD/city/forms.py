@@ -6,5 +6,5 @@ from wtforms.validators import (DataRequired, Regexp, Length)
 class CityForm(FlaskForm):
     city_name = StringField(
         'city_name',
-        [DataRequired(), Regexp(r'[A-Za-z]'), Length(min=4, max=25)]
+        [DataRequired(), Regexp(r'^[a-zA-Z\s]*$'), Length(min=4, max=25)]
     )
