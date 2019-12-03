@@ -25,7 +25,7 @@ def list_district_api():
 
 
 @district_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def list_district(error=None, form=None):
     city = CityModel()
     if form is None:

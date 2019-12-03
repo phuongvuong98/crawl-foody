@@ -21,7 +21,7 @@ def list_color_api():
 
 
 @color_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def list_color(error=None, form=None):
     if form is None:
         form = ColorForm()

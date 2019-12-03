@@ -40,6 +40,6 @@ def create_app(config_name):
     app.register_blueprint(product_blueprint, url_prefix='/product')
     app.register_blueprint(brand_blueprint, url_prefix='/brand')
     app.register_blueprint(variant_blueprint, url_prefix='/variants')
-    app.register_blueprint(search_blueprint, url_prefix='/')
+    app.register_blueprint(search_blueprint, url_prefix='/search')
 
     return app

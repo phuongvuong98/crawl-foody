@@ -20,7 +20,7 @@ def list_city_api():
 
 
 @city_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def list_city(error=None, form=None):
     if form is None:
         form = CityForm()

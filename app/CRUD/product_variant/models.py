@@ -1,9 +1,6 @@
 from flask_mongoengine import Pagination
-from app import db
 from app.entity.mongo.variant import ProductVariant as ProductVariantEntity
-from app.search import query_index
 from constants import Pages
-from constants import Errors
 
 
 class ProductVariantModel(ProductVariantEntity):
@@ -23,6 +20,7 @@ class ProductVariantModel(ProductVariantEntity):
         try:
             self.objects(id__exact=_id).update(set__price=price, set__product_id=product_id, set__store_id=store_id,
                                                set__color_id=color_id)
+            ProductVariantEntity.reindex()
             return True, None
         except Exception as e:
             return False, e.__str__()
@@ -35,17 +33,3 @@ class ProductVariantModel(ProductVariantEntity):
             return True, None
         except Exception as e:
             return False, e.__str__()
-
-    @classmethod
-    def search(cls, expression, page, per_page):
-        ids, obj = query_index(cls.__tablename__, expression, page, per_page)
-        ids = [str(_id) for _id in ids]
-        if len(obj) == 0:
-            return cls.objects(id__exact=0), 0
-        arr_model = []
-        for _id in ids:
-            try:
-                arr_model.append(cls.objects.get(id=_id))
-            except Exception as e:
-                continue
-        return arr_model, obj

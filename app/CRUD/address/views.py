@@ -29,7 +29,7 @@ def create_address():
 
 
 @address_blueprint.route('/district', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def get_district_by_city():
     city_id = request.args.get('city_id')
     district = DistrictModel()

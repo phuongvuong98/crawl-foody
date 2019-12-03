@@ -21,7 +21,7 @@ def list_brand_api():
 
 
 @brand_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=500)
+@cache.cached(timeout=5)
 def list_brand(error=None, form=None):
     if form is None:
         form = BrandForm()

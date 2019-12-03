@@ -32,7 +32,7 @@ def list_store_api():
 
 
 @store_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def list_store(error=None, form=None):
     address = AddressModel()
     if form is None:

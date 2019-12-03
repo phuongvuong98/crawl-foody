@@ -25,7 +25,7 @@ def list_category_api():
 
 
 @category_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def list_category(error=None, form=None):
     brand = BrandModel()
     if form is None:

@@ -13,7 +13,7 @@ variant_blueprint = Blueprint(
 
 
 @variant_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def index():
     page = request.args.get("page", 1, type=int)
     product_variant = ProductVariantModel()

@@ -40,7 +40,7 @@ def get_category_by_brand():
 
 
 @product_blueprint.route('/', methods=['GET'])
-@cache.cached(timeout=20)
+@cache.cached(timeout=5)
 def list_products(error=None, form=None):
     if form is None:
         form = ProductForm()
