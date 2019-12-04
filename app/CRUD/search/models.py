@@ -41,6 +41,7 @@ class SearchableMixin(object):
                 arr_model.append(cls.objects.get(id=_id))
             except Exception as e:
                 continue
+
         return arr_model, obj
 
     @classmethod

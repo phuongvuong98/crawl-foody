@@ -8,6 +8,7 @@ class Brand(mongoengine.Document, SearchableMixin):
     __searchable__ = ['name']
     name = mongoengine.StringField(max_length=60, required=True, unique=True)
     meta = {'allow_inheritance': True}
+    mysql_id = mongoengine.StringField(max_length=100)
 
     def __repr__(self):
         return '<Brand %r>' % (self.name)

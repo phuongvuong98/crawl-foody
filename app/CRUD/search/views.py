@@ -23,6 +23,7 @@ def full_text():
     cls_model = [AddressModel, BrandModel, CategoryModel, CityModel, ColorModel, DistrictModel, ProductModel,
                  StoreModel, ProductVariantModel]
     # reindex_all = [model.reindex() for model in cls_model]
+    # reindex_all = CityModel.reindex()
     kind_search = FullTextSearch()
     search_model = [model.search(form.q.data, 1, 10, kind_search) for model in cls_model]
     search_obj = []
@@ -39,7 +40,7 @@ def fuzzy():
         return redirect('/city')
     cls_model = [AddressModel, BrandModel, CategoryModel, CityModel, ColorModel, DistrictModel, ProductModel,
                  StoreModel, ProductVariantModel]
-    # reindex_all = [model.reindex() for model in cls_model]
+    reindex_all = [model.reindex() for model in cls_model]
     kind_search = FuzzySearch()
     search_model = [model.search(form.q.data, 1, 10, kind_search) for model in cls_model]
     search_obj = []

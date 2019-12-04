@@ -32,7 +32,7 @@ def query_fuzzy(index, query, page, per_page):
         return [], 0
     search = current_app.elasticsearch.search(
         index=index,
-        body={'query': {'multi_match': {'query': query, 'fields': ['*'], 'fuzziness': 'AUTO'}},
+        body={'query': {'multi_match': {'query': query, 'fields': ['*'], 'fuzziness': '3'}},
               'from': (page - 1) * per_page, 'size': per_page})
     ids = [hit['_id'] for hit in search['hits']['hits']]
     return ids, search['hits']['hits']
