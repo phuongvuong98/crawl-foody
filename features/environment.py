@@ -1,25 +1,39 @@
+from mongoengine import disconnect
 from selenium import webdriver
-from flasky import app
-from app import db, create_app
-import threading
-from wsgiref import simple_server
-from wsgiref.simple_server import WSGIRequestHandler
+from app import create_app
 
 
 def before_all(context):
     print("Executing before all")
+    disconnect(alias='default')
     context.app = create_app('testing')
-    context.app_context = context.app.app_context()
-    context.app_context.push()
-    db.drop_all()
-    db.create_all()
-    context.server = simple_server.WSGIServer(("", 5000), WSGIRequestHandler)
-    context.server.set_app(context.app)
-    context.pa_app = threading.Thread(target=context.server.serve_forever)
-    context.pa_app.start()
-    context.url = "http://localhost:5000"
     context.client = context.app.test_client(use_cookies=True)
-    context.browser = webdriver.Chrome('dependencies/chromedriver')
+    options = webdriver.ChromeOptions()
+    # prefs = {'profile.default_content_setting_values': {'cookies': 2,
+    #                                                     'plugins': 2, 'popups': 2, 'geolocation': 2,
+    #                                                     'notifications': 2, 'auto_select_certificate': 2,
+    #                                                     'fullscreen': 2,
+    #                                                     'mouselock': 2, 'mixed_script': 2, 'media_stream': 2,
+    #                                                     'media_stream_mic': 2, 'media_stream_camera': 2,
+    #                                                     'protocol_handlers': 2,
+    #                                                     'ppapi_broker': 2, 'automatic_downloads': 2, 'midi_sysex': 2,
+    #                                                     'push_messaging': 2, 'ssl_cert_decisions': 2,
+    #                                                     'metro_switch_to_desktop': 2,
+    #                                                     'protected_media_identifier': 2, 'app_banner': 2,
+    #                                                     'site_engagement': 2,
+    #                                                     'durable_storage': 2}}
+
+    # 'javascript': 2,'images': 2,
+    # options.add_experimental_option('prefs', prefs)
+    # options.add_argument("start-maximized")
+    # options.add_argument("disable-infobars")
+    # options.add_argument("--disable-extensions")
+    # options.add_argument('--no-sandbox')
+    # options.add_argument('--disable-dev-shm-usage')
+    # context.browser = webdriver.Chrome(chrome_options=options, executable_path='dependencies/chromedriver')
+    # context.browser = webdriver.Chrome('dependencies/chromedriver')
+    # 'dependencies/geckodriver_2'
+    context.browser = webdriver.Firefox()
     context.browser.maximize_window()
     context.browser.implicitly_wait(20)
 
@@ -43,10 +57,7 @@ def after_feature(context, feature):
 
 def after_all(context):
     print("Executing after all")
-    context.browser.quit()
-    context.server.shutdown()
-    context.pa_app.join()
-    
+
 
 
 

@@ -1,4 +1,4 @@
-#!/Users/phuongvuong/Desktop/crud_refactor_mongo/venv/bin/python3
+#!/Users/nguyenphuongvuong/MyData/my-journey/AthenaStudio/Crud_refactor_mongo/venv/bin/python3.7
 # -*- coding: utf-8 -*-
 import re
 import sys

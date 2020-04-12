@@ -28,7 +28,7 @@ def _deactivate(args):
 _deactivate(["nondestructive"])
 aliases["deactivate"] = _deactivate
 
-$VIRTUAL_ENV = r"/Users/phuongvuong/Desktop/crud_refactor_mongo/venv"
+$VIRTUAL_ENV = r"/Users/nguyenphuongvuong/MyData/my-journey/AthenaStudio/Crud_refactor_mongo/venv"
 
 $_OLD_VIRTUAL_PATH = $PATH
 $PATH = $PATH[:]

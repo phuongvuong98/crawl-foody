@@ -46,7 +46,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/phuongvuong/Desktop/crud_refactor_mongo/venv"
+VIRTUAL_ENV="/Users/nguyenphuongvuong/MyData/my-journey/AthenaStudio/Crud_refactor_mongo/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
